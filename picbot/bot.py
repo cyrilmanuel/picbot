@@ -1,14 +1,11 @@
 """Sample Slack ping bot using asyncio and websockets."""
 import asyncio
 import json
-import signal
-
 import aiohttp
 import websockets
 
 from config import DEBUG, TOKEN
 RUNNING = True
-
 
 async def producer():
     """Produce a ping message every 10 seconds."""
@@ -27,6 +24,7 @@ async def bot(token):
                                data={"token": TOKEN}) as response:
             assert 200 == response.status, "Error connecting to RTM."
             rtm = await response.json()
+            assert rtm['url'], rtm
 
     async with websockets.connect(rtm["url"]) as ws:
         while RUNNING:
@@ -48,6 +46,8 @@ async def bot(token):
             if producer_task in done:
                 message = producer_task.result()
                 await ws.send(message)
+
+
 
 def stop():
     """Gracefully stop the bot."""

@@ -8,6 +8,9 @@
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
 
+#Secret
+config.py
+
 # Sensitive or high-churn files:
 .idea/dataSources.ids
 .idea/dataSources.xml
