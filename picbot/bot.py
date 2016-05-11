@@ -4,7 +4,6 @@ import json
 import signal
 
 import aiohttp
-
 import websockets
 
 from config import DEBUG, TOKEN
@@ -16,11 +15,9 @@ async def producer():
     await asyncio.sleep(10)
     return json.dumps({"type": "ping"})
 
-
 async def consumer(message):
     """Consume the message by printing them."""
     print(message)
-
 
 async def bot(token):
     """Create a bot that joins Slack."""
@@ -52,18 +49,16 @@ async def bot(token):
                 message = producer_task.result()
                 await ws.send(message)
 
-
 def stop():
     """Gracefully stop the bot."""
     global RUNNING
     RUNNING = False
     print("Stopping... closing connections.")
 
-
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
 
     loop.set_debug(DEBUG)
-    loop.add_signal_handler(signal.SIGINT, stop)
+   # loop.add_signal_handler(signal.SIGINT, stop)
     loop.run_until_complete(bot(TOKEN))
     loop.close()
