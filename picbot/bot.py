@@ -2,19 +2,37 @@
 import asyncio
 import json
 import aiohttp
-import websockets
 
+from api import api_call
 from config import DEBUG, TOKEN
+
 RUNNING = True
 
-async def producer():
-    """Produce a ping message every 10 seconds."""
-    await asyncio.sleep(10)
-    return json.dumps({"type": "ping"})
 
-async def consumer(message):
+async def producer(user, message):
+    """Produce a ping message every 10 seconds."""
+    # await asyncio.sleep(10)
+    return json.dumps({"type": "message",
+                       "channel": "C0LPX9EMN",
+                       "text": "<@{0}>{1}".format(user, message),
+                       "team": "T0LPWE4R5"})
+
+
+async def consumer(message, ws):
     """Consume the message by printing them."""
     print(message)
+    if message.get('type') == 'message':
+        user = await api_call('users.info',
+                              {'user': message.get('user')})
+
+        print("{0}:{1}".format(user["user"]["name"],
+                               message["text"]))
+        answer = "Shut up please."
+        ws.send_str(json.dumps({"type": "message",
+                                "channel": "C0LPX9EMN",
+                                "text": "<@{0}>{1}".format(user["user"]["name"], answer),
+                                    "team": "T0LPWE4R5"}))
+
 
 async def bot(token):
     """Create a bot that joins Slack."""
@@ -24,41 +42,18 @@ async def bot(token):
                                data={"token": TOKEN}) as response:
             assert 200 == response.status, "Error connecting to RTM."
             rtm = await response.json()
-            assert rtm['url'], rtm
 
-    async with websockets.connect(rtm["url"]) as ws:
-        while RUNNING:
-            listener_task = asyncio.ensure_future(ws.recv())
-            producer_task = asyncio.ensure_future(producer())
+        async with client.ws_connect(rtm["url"]) as ws:
+            async for msg in ws:
+                assert msg.tp == aiohttp.MsgType.text
+                message = json.loads(msg.data)
+                asyncio.ensure_future(consumer(message, ws))
 
-            done, pending = await asyncio.wait(
-                [listener_task, producer_task],
-                return_when=asyncio.FIRST_COMPLETED
-            )
-
-            for task in pending:
-                task.cancel()
-
-            if listener_task in done:
-                message = listener_task.result()
-                await consumer(message)
-
-            if producer_task in done:
-                message = producer_task.result()
-                await ws.send(message)
-
-
-
-def stop():
-    """Gracefully stop the bot."""
-    global RUNNING
-    RUNNING = False
-    print("Stopping... closing connections.")
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
 
     loop.set_debug(DEBUG)
-   # loop.add_signal_handler(signal.SIGINT, stop)
+    # loop.add_signal_handler(signal.SIGINT, stop)
     loop.run_until_complete(bot(TOKEN))
     loop.close()
