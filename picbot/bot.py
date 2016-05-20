@@ -4,7 +4,7 @@ import json
 import aiohttp
 
 from api import api_call
-from config import DEBUG, TOKEN
+from picbot.config import DEBUG, TOKEN
 
 async def consumer(message, ws):
     """Consume the message by printing them."""

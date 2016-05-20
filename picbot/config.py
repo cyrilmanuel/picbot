@@ -1,2 +1,0 @@
-DEBUG = True
-TOKEN = "xoxb-38195556468-jcozp6lGnq8U1A17mgF0Zm7f"
