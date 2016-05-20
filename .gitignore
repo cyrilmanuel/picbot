@@ -10,6 +10,7 @@
 
 #Secret
 config.py
+pickbot/config.py
 
 # Sensitive or high-churn files:
 .idea/dataSources.ids
