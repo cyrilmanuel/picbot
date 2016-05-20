@@ -1,6 +1,4 @@
 """Testing the authentication on Slack API."""
-import asyncio
-
 import aiohttp
 
 from config import DEBUG, TOKEN

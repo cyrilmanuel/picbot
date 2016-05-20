@@ -6,32 +6,23 @@ import aiohttp
 from api import api_call
 from config import DEBUG, TOKEN
 
-RUNNING = True
-
-
-async def producer(user, message):
-    """Produce a ping message every 10 seconds."""
-    # await asyncio.sleep(10)
-    return json.dumps({"type": "message",
-                       "channel": "C0LPX9EMN",
-                       "text": "<@{0}>{1}".format(user, message),
-                       "team": "T0LPWE4R5"})
-
-
 async def consumer(message, ws):
     """Consume the message by printing them."""
-    print(message)
-    if message.get('type') == 'message':
+    if message.get('type') == 'message' and message.get('channel') == 'C0LPX9EMN':
         user = await api_call('users.info',
                               {'user': message.get('user')})
 
-        print("{0}:{1}".format(user["user"]["name"],
-                               message["text"]))
         answer = "Shut up please."
+        channel = "C0LPX9EMN"
+        team = "T0LPWE4R5"
         ws.send_str(json.dumps({"type": "message",
-                                "channel": "C0LPX9EMN",
-                                "text": "<@{0}>{1}".format(user["user"]["name"], answer),
-                                    "team": "T0LPWE4R5"}))
+                                "channel": channel,
+                                "text": "<@{0}> {1}".format(user["user"]["name"], answer),
+                                "team": team}))
+
+        #uploaded = await api_call('files.upload', {'file': 'Images/meme1.jpg',
+        #                                           "channel": channel,
+        #                                           "team": team})
 
 
 async def bot(token):
@@ -52,8 +43,6 @@ async def bot(token):
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-
     loop.set_debug(DEBUG)
-    # loop.add_signal_handler(signal.SIGINT, stop)
     loop.run_until_complete(bot(TOKEN))
     loop.close()
