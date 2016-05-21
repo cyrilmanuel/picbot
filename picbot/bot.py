@@ -9,11 +9,11 @@ from config import DEBUG, TOKEN
 async def consumer(message, ws):
     """Consume the message by printing them."""
     print(message)
-    if message.get('type') == 'message' and message.get('channel') == 'C0LPX9EMN':
+    if message.get('type') == 'message' and message.get('channel') == 'G1AN77A0L':
         user = await api_call('users.info',
                               {'user': message.get('user')})
 
-        channel = "C0LPX9EMN"
+        channel = "G1AN77A0L"
         team = "T0LPWE4R5"
 
         mSplit = message.get('text').split(':', 1)
@@ -21,7 +21,7 @@ async def consumer(message, ws):
         coreText = mSplit[1]
 
         if(adressedTo == '<@U145RGCDS>'):
-            answer = botAnswers(coreText)
+            answer = bot_answers(coreText.strip())
             ws.send_str(json.dumps({"type": "message",
                                 "channel": channel,
                                 "text": "<@{0}> {1}".format(user["user"]["name"], answer),
@@ -31,21 +31,12 @@ async def consumer(message, ws):
             #                                           "team": team})
 
 
-def botAnswers(x):
+def bot_answers(x):
     return {
         'pic': 'The picture module is still in development.',
-        ' pic': 'The picture module is still in development.',
         'picture': 'The picture module is still in development.',
-        ' picture': 'The picture module is still in development.',
         'insult': "Darn, thee are quite as beautiful as a slug's arse, Sir.",
-        ' insult': "Darn, thee are quite as beautiful as a slug's arse, Sir.",
         'help': "Welcome to using our pictbot ! \n"
-                              "This bot's purpose is to upload you some funny pictures when you ask fort it.\n"
-                              "Command 'pic' : Uploads a picture.\n"
-                              "Command 'picture' : same as above.\n"
-                              "Command 'insult' : insults you like a Sir.\n"
-                              "Command 'help' : you know what this does.\n",
-        ' help': "Welcome to using our pictbot !\n"
                               "This bot's purpose is to upload you some funny pictures when you ask fort it.\n"
                               "Command 'pic' : Uploads a picture.\n"
                               "Command 'picture' : same as above.\n"
