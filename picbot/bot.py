@@ -16,12 +16,12 @@ async def consumer(message, ws):
         channel = "G1AN77A0L"
         team = "T0LPWE4R5"
 
-        mSplit = message.get('text').split(':', 1)
-        adressedTo = mSplit[0]
-        coreText = mSplit[1]
+        message_split = message.get('text').split(':', 1)
+        recipient = message_split[0]
+        core_text = message_split[1]
 
-        if(adressedTo == '<@U145RGCDS>'):
-            answer = bot_answers(coreText.strip())
+        if(recipient == '<@U145RGCDS>'):
+            answer = bot_answers(core_text.strip())
             ws.send_str(json.dumps({"type": "message",
                                 "channel": channel,
                                 "text": "<@{0}> {1}".format(user["user"]["name"], answer),
