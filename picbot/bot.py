@@ -7,7 +7,7 @@ from api import api_call
 from config import DEBUG, TOKEN
 
 
-# C'est dans consumer que l'essentiel du traitement des messages se fait.as
+# C'est dans consumer que l'essentiel du traitement des messages se fait.
 
 # Pour le moment, le bot :
 #   -Ne répond que lorsqu'on s'addresse à lui, sous forme de texte.
@@ -29,9 +29,9 @@ async def consumer(message, ws):
         # sépare le message en deux, avec d'un côté le destinataire du message, de l'autre le corps du message.
         message_split = message.get('text').split(':', 1)
         recipient = message_split[0]
-        core_text = message_split[1]
 
-        if recipient == '<@{0}>'.format(id_bot):  # Si on s'adresse au bot
+        if len(message_split) > 0 and recipient == '<@{0}>'.format(id_bot):
+            core_text = message_split[1]
 
             answer = bot_answers(
                     core_text.strip())  # La methode "strip()" enlève les espaces superflus ("   picture  " sera considéré comme "picture")
