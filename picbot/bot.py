@@ -19,6 +19,7 @@ async def consumer(message, ws):
     """Consume the message by printing them."""
     channel = "G1AN77A0L"
     team = "T0LPWE4R5"
+    id_bot = "U145RGCDS"
     print(message)
 
     if message.get('type') == 'message' and message.get('channel') == channel:
@@ -30,10 +31,10 @@ async def consumer(message, ws):
         recipient = message_split[0]
         core_text = message_split[1]
 
-        if recipient == '<@U145RGCDS>':  # Si on s'adresse au bot
+        if recipient == '<@{0}>'.format(id_bot):  # Si on s'adresse au bot
 
             answer = bot_answers(
-                core_text.strip())  # La methode "strip()" enlève les espaces superflus ("   picture  " sera considéré comme "picture")
+                    core_text.strip())  # La methode "strip()" enlève les espaces superflus ("   picture  " sera considéré comme "picture")
 
             # la méthode ci-dessous envoie sur le web socket un message sous forme de string.
             ws.send_str(json.dumps({"type": "message",
@@ -41,17 +42,11 @@ async def consumer(message, ws):
                                     "text": "<@{0}> {1}".format(user["user"]["name"], answer),
                                     "team": team}))
 
-            # Ce code ci dessous ne marche pas.
-            # Cependant, j'ai cru comprendre que pour envoyé une image il faut utiliser "api_call" avec une méthode "file.upload"
-            # Il faut checker à cette adresse, ça peut aider : https://medium.com/@greut/a-slack-bot-with-pythons-3-5-asyncio-ad766d8b5d8f#.f3uy2tyne
-
-
-
             with open('Images/meme1.jpg', 'rb') as f:
-                babaorom = await api_call('files.upload',
-                                          {"channel": channel, "team": team, "filename": 'picONON.png', "file": f},
-                                          TOKEN)
-                print(babaorom['file']['permalink'])
+                file_uploaded = await api_call('files.upload',
+                                               {"channel": channel, "team": team, "filename": 'picONON.png', "file": f}
+                                               )
+                print(file_uploaded['file']['permalink'])
 
                 await api_call('chat.postMessage',
                                {"channel": channel,
@@ -62,13 +57,11 @@ async def consumer(message, ws):
                                         "title": "Slack API Documentation",
                                         "color": "#ff70ff",
                                         "image_url": "http://img.hebus.com/hebus_2016/05/18/1463547427_92448.jpg"
-
                                     }
                                 ],
                                 "as_user": "true"
-                                },
-                               TOKEN)
-                # uploaded = await api_call('files.upload', {'file': 'Images/meme1.jpg', "channel": channel, "team": team}, TOKEN)
+                                }
+                               )
 
 
 # Retourne un message en fonction du message entré, avec une valeur par défaut si x n'est pas pris en charge.
