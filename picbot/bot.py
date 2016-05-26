@@ -2,101 +2,148 @@
 import asyncio
 import json
 import aiohttp
+import random
 
 from api import api_call
 from config import DEBUG, TOKEN
 
 
-# C'est dans consumer que l'essentiel du traitement des messages se fait.
-
 # Pour le moment, le bot :
 #   -Ne répond que lorsqu'on s'addresse à lui, sous forme de texte.
-#   -Répond aux commandes pic, picture, insult et help.
+#   -Répond aux commandes pic, picture et help.
 #   -Dirige les utilisateurs vers la commande help si aucune bonne commande entrée.
 
 #   -TO DO: Faire en sorte que le bot upload une image du répertoire "Images" en réponse aux commandes pic et picture.
-async def consumer(message, ws):
-    """Consume the message by printing them."""
-    channel = "G1AN77A0L"
-    team = "T0LPWE4R5"
-    id_bot = "U145RGCDS"
-    print(message)
 
-    if message.get('type') == 'message' and message.get('channel') == channel:
-        user = await api_call('users.info',  # récupère le nom de l'utilisateur ayant envoyé le message
-                              {'user': message.get('user')})
+# Liens utiles :
+#   -Méthodes disponibles pour api_call : https://api.slack.com/methods
+#   -Guide du prof : https://medium.com/@greut/a-slack-bot-with-pythons-3-5-asyncio-ad766d8b5d8f#.7okn8gngi
 
-        # sépare le message en deux, avec d'un côté le destinataire du message, de l'autre le corps du message.
-        message_split = message.get('text').split(':', 1)
-        recipient = message_split[0]
+class PictBot:
+    def __init__(self, token=TOKEN):
+        self.token = token
+        self.rtm = None
+        self.api = {
+            "pic": self.picture,
+            "picture": self.picture,
+            "joke": self.joke,
+            "help": self.help
+        }
 
-        if len(message_split) > 0 and recipient == '<@{0}>'.format(id_bot):
-            core_text = message_split[1]
+        self.jokes = [
+            "Knock, Knock \n - Who's there? \n - Your Java Update",
+            "Knock, Knock \n - Who's there? \n *Long Pause* \n - Java",
+            "A SQL query goes into a bar, walks up to two tables and asks, 'Can I join you?'",
+            "When your hammer is C++, everything begins to look like a thumb.",
+            "programmer (noun) An organism capable of converting caffeine into code."
+        ]
 
-            answer = bot_answers(
-                    core_text.strip())  # La methode "strip()" enlève les espaces superflus ("   picture  " sera considéré comme "picture")
+    async def sendText(self, message, channel_id, user_name, team_id, *args):
+        return await api_call('chat.postMessage', {"type": "message",
+                                                   "channel": channel_id,
+                                                   "text": "<@{0}> {1}".format(user_name["user"]["name"], message),
+                                                   "team": team_id})
 
-            # la méthode ci-dessous envoie sur le web socket un message sous forme de string.
-            ws.send_str(json.dumps({"type": "message",
-                                    "channel": channel,
-                                    "text": "<@{0}> {1}".format(user["user"]["name"], answer),
-                                    "team": team}))
+    async def joke(self, channel_id, user_name, team_id, *args):
+        return await self.sendText(random.choice(self.jokes), channel_id, user_name, team_id, *args)
 
-            with open('Images/meme1.jpg', 'rb') as f:
-                file_uploaded = await api_call('files.upload',
-                                               {"channel": channel, "team": team, "filename": 'picONON.png', "file": f}
-                                               )
-                print(file_uploaded['file']['permalink'])
+    async def picture(self, channel_id, user_name, team_id, file_path, name_of_file):
+        with open(file_path, 'rb') as f:
+            file_uploaded = await api_call('files.upload',
+                                           {"channel": channel_id,
+                                            "team": team_id,
+                                            "text": "<@{0}>".format(user_name["user"]["name"]),
+                                            "filename": name_of_file},
+                                           file=f
+                                           )
+            return file_uploaded
 
-                await api_call('chat.postMessage',
-                               {"channel": channel,
-                                "text": "image",
-                                "attachments": [
-                                    {
-                                        "fallback": "Required plain-text summary of the attachment.",
-                                        "title": "Slack API Documentation",
-                                        "color": "#ff70ff",
-                                        "image_url": "http://img.hebus.com/hebus_2016/05/18/1463547427_92448.jpg"
-                                    }
-                                ],
-                                "as_user": "true"
-                                }
-                               )
+    async def help(self, channel_id, user_name, team_id, *args):
+        helpMessage = "Welcome to our Picture bot ! \n" \
+                      "This bot is here to send you some funny pictures from some funny websites. \n" \
+                      "Here are the commands : \n" \
+                      " - pic : uploads a picture. \n" \
+                      " - picture : one and the same =P \n" \
+                      " - joke : gets you a random joke for you, programmer" \
+                      " - help : I think you already know this one, don't you. \n" \
+                      "Have fun !"
+        return await self.sendText(helpMessage, channel_id, user_name, team_id)
 
+    async def error(self, channel_id, user_name, team_id, *args):
+        error = "Command not found. Type 'help' for a list of valid commands."
+        return await self.sendText(error, channel_id, user_name, team_id)
 
-# Retourne un message en fonction du message entré, avec une valeur par défaut si x n'est pas pris en charge.
-def bot_answers(x):
-    return {
-        'pic': 'The picture module is still in development.',
-        'picture': 'The picture module is still in development.',
-        'insult': "Darn, thee are quite as beautiful as a slug's arse, Sir.",
-        'help': "Welcome to using our pictbot ! \n"
-                "This bot's purpose is to upload you some funny pictures when you ask fort it.\n"
-                "Command 'pic' : Uploads a picture.\n"
-                "Command 'picture' : same as above.\n"
-                "Command 'insult' : insults you like a Sir.\n"
-                "Command 'help' : you know what this does.\n",
-    }.get(x, 'Command not found. Type "help" for a list of commands available.')
+    async def process(self, message):
+        """Processes input messages."""
+        # Comment the line below if you want your bot to be active on all channels
+        # and don't forget to modify the if statement below too
+        # channel_id = 'G1AN77A0L'  # name of the channel you want the bot active in.
 
+        if message.get('type') == 'message':  # and message.get('channel') == channel_id:
+            # _____________________________________________
+            # _____________________________________________
+            # ///////////INFORMATION FORMATTING\\\\\\\\\\\\
+            # _____________________________________________
+            # _____________________________________________
 
-async def bot(token):
-    """Create a bot that joins Slack."""
-    loop = asyncio.get_event_loop()
-    with aiohttp.ClientSession(loop=loop) as client:
-        async with client.post("https://slack.com/api/rtm.start",
-                               data={"token": TOKEN}) as response:
-            assert 200 == response.status, "Error connecting to RTM."
-            rtm = await response.json()
+            # Channel-related entries
+            # Un-comment this next line if your bot should be active in all channels he's invited in
+            channel_id = message.get('channel')
+            channel_name = await api_call('channels.info',  # gets the name of the channel for given id
+                                          {'channel': message.get('channel')}) # doesn't work for some reason
 
-        async with client.ws_connect(rtm["url"]) as ws:
-            async for msg in ws:
-                assert msg.tp == aiohttp.MsgType.text
-                message = json.loads(msg.data)
-                asyncio.ensure_future(consumer(message, ws))
+            # Team-related entries
+            team_id = self.rtm['team']['id']  # gets id of the active team
+            team_name = self.rtm['team']['name']  # gets name of the active team
+
+            # User-related entries
+            user_id = message.get('user')
+            user_name = await api_call('users.info',  # gets user name based on id
+                                       {'user': message.get('user')})
+
+            # Self-related entries
+            bot_id = self.rtm['self']['id']  # get id of self, meaning the bot.
+            bot_name = await api_call('users.info',  # gets the name of self
+                                      {'user': bot_id})
+
+            # Prints input message. May contain useful information for coding, debugging, etc.
+            print("message : {0}".format(message))
+
+            # _____________________________________________
+            # _____________________________________________
+            # ///////////ANSWER DECISION MAKING\\\\\\\\\\\\
+            # _____________________________________________
+            # _____________________________________________
+
+            # Splits message in half, with recipient on the left side, and the core text on the other.
+            message_split = message.get('text').split(':', 1)
+            recipient = message_split[0].strip()
+
+            if len(message_split) > 0 and recipient == '<@{0}>'.format(bot_id):  # If message is adressed to our bot
+                core_text = message_split[1].strip()
+                print(await self.api.setdefault(core_text, self.error)(channel_id,
+                                                                       user_name,
+                                                                       team_id,
+                                                                       'Images/meme1.jpg',
+                                                                       'pic.png'))
+
+    async def connect(self):
+        """Create a bot that joins Slack."""
+
+        self.rtm = await api_call('rtm.start')
+        assert self.rtm['ok'], self.rtm['error']
+
+        with aiohttp.ClientSession() as client:
+            async with client.ws_connect(self.rtm["url"]) as ws:
+                async for msg in ws:
+                    assert msg.tp == aiohttp.MsgType.text
+                    message = json.loads(msg.data)
+                    asyncio.ensure_future(self.process(message))
 
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.set_debug(DEBUG)
-    loop.run_until_complete(bot(TOKEN))
+    bot = PictBot(TOKEN)
+    loop.run_until_complete(bot.connect())
     loop.close()
