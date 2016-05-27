@@ -53,9 +53,14 @@ class PictBot:
         """Selects randomly a joke from the list"""
         return await self.sendText(random.choice(self.jokes), channel_id, user_name, team_id)
 
+
     async def picture(self, channel_id, user_name, team_id):
         """Sends a picture to the channel"""
-        return await self.sendText(xkcd.getRandomComic().getImageLink(), channel_id, user_name, team_id)
+        loop = asyncio.get_event_loop()
+        future = loop.run_in_executor(None, xkcd.getRandomComic) # Permet une réelle parallelisation
+        comic = await future
+        link = comic.getImageLink()
+        return await self.sendText(link, channel_id, user_name, team_id)
 
     async def help(self, channel_id, user_name, team_id):
         """Displays the help message to the channel"""
