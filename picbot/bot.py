@@ -17,6 +17,8 @@ from config import DEBUG, TOKEN
 # Liens utiles :
 #   -Méthodes disponibles pour api_call : https://api.slack.com/methods
 #   -Guide du prof : https://medium.com/@greut/a-slack-bot-with-pythons-3-5-asyncio-ad766d8b5d8f#.7okn8gngi
+#   -rtm documentation : https://api.slack.com/rtm
+#   -rtm.start documentation : https://api.slack.com/methods/rtm.start
 
 # Notes :
 #   -Le bot n'uplload pas d'images, il va les chercher déjà existantes sur Internet.
@@ -95,7 +97,7 @@ class PictBot:
             # Un-comment this next line if your bot should be active in all channels he's invited in
             channel_id = message.get('channel')
             channel_name = await api_call('channels.info',  # gets the name of the channel for given id
-                                          {'channel': message.get('channel')})  # doesn't work for some reason
+                                          {'channel': message.get('channel')})  # doesn't work all the time
 
             # Team-related entries
             team_id = self.rtm['team']['id']  # gets id of the active team
@@ -107,14 +109,13 @@ class PictBot:
                                        {'user': message.get('user')})
 
             # Self-related entries
-            bot_id = self.rtm['self']['id']  # get id of self, meaning the bot.
-            bot_name = await api_call('users.info',  # gets the name of self
-                                      {'user': bot_id})
+            bot_id = self.rtm['self']['id']  # gets id of self, meaning the bot.
+            bot_name = self.rtm['self']['name'] # gets its name
 
             # message related entries
             message_text = message.get('text')
             # Prints input message. May contain useful information for coding, debugging, etc.
-            print("message : {0}".format(message))
+            # print("message : {0}".format(message))
 
             # _____________________________________________
             # _____________________________________________
