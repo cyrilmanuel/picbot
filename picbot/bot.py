@@ -53,11 +53,10 @@ class PictBot:
         """Selects randomly a joke from the list"""
         return await self.sendText(random.choice(self.jokes), channel_id, user_name, team_id)
 
-
     async def picture(self, channel_id, user_name, team_id):
         """Sends a picture to the channel"""
         loop = asyncio.get_event_loop()
-        future = loop.run_in_executor(None, xkcd.getRandomComic) # Permet une réelle parallelisation
+        future = loop.run_in_executor(None, xkcd.getRandomComic)  # Permet une réelle parallelisation
         comic = await future
         link = comic.getImageLink()
         return await self.sendText(link, channel_id, user_name, team_id)
@@ -96,7 +95,7 @@ class PictBot:
             # Un-comment this next line if your bot should be active in all channels he's invited in
             channel_id = message.get('channel')
             channel_name = await api_call('channels.info',  # gets the name of the channel for given id
-                                          {'channel': message.get('channel')}) # doesn't work for some reason
+                                          {'channel': message.get('channel')})  # doesn't work for some reason
 
             # Team-related entries
             team_id = self.rtm['team']['id']  # gets id of the active team
@@ -124,15 +123,14 @@ class PictBot:
             # _____________________________________________
 
             # Splits message in half, with recipient on the left side, and the core text on the other.
-            if(isinstance(message_text, str)):
-                message_split = message_text.split(':', 1) # Generate an exception if type is different than text.
+            if (isinstance(message_text, str)):
+                message_split = message_text.split(':', 1)  # Generate an exception if type is different than text.
                 recipient = message_split[0].strip()
 
                 if len(message_split) > 0 and recipient == '<@{0}>'.format(bot_id):  # If message is adressed to our bot
                     core_text = message_split[1].strip()
-                    print(await self.api.setdefault(core_text, self.error)(channel_id,
-                                                                           user_name,
-                                                                           team_id))
+                    action = self.api.get(core_text) or self.error
+                    print(await action(channel_id, user_name, team_id))
 
     async def connect(self):
         """Connects the bot to Slack"""
