@@ -1,0 +1,5 @@
+setup.py
+picbot.egg-info/PKG-INFO
+picbot.egg-info/SOURCES.txt
+picbot.egg-info/dependency_links.txt
+picbot.egg-info/top_level.txt
