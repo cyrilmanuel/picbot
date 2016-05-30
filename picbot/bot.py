@@ -4,6 +4,7 @@ import json
 import aiohttp
 import random
 import xkcd
+# import antigravity # CAREFUL : Dangerous ! Velociraptors might appear.
 
 from api import api_call
 from config import DEBUG, TOKEN
@@ -33,7 +34,7 @@ class PictBot:
             "pic": self.picture,
             "picture": self.picture,
             "joke": self.joke,
-            "help": self.help
+            "help": self.help,
         }
 
         self.jokes = [
@@ -97,7 +98,7 @@ class PictBot:
             # Un-comment this next line if your bot should be active in all channels he's invited in
             channel_id = message.get('channel')
             channel_name = await api_call('channels.info',  # gets the name of the channel for given id
-                                          {'channel': message.get('channel')})  # doesn't work all the time
+                                          {'channel': channel_id})  # doesn't work all the time
 
             # Team-related entries
             team_id = self.rtm['team']['id']  # gets id of the active team
@@ -106,7 +107,7 @@ class PictBot:
             # User-related entries
             user_id = message.get('user')
             user_name = await api_call('users.info',  # gets user name based on id
-                                       {'user': message.get('user')})
+                                       {'user': user_id})
 
             # Self-related entries
             bot_id = self.rtm['self']['id']  # gets id of self, meaning the bot.
