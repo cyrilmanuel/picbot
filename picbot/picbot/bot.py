@@ -6,7 +6,7 @@ import random
 import xkcd
 # import antigravity # CAREFUL : Dangerous ! Velociraptors might appear.
 
-from api import api_call
+from .api import api_call
 from config import DEBUG, TOKEN
 
 

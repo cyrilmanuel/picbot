@@ -3,6 +3,8 @@
 
 #Everything IDE related
 .idea/*
+*.swp
+.cache
 
 #Python-related stuff
 *.pyc
