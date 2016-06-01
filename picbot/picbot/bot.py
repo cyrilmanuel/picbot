@@ -52,9 +52,9 @@ class PictBot:
                                                    "text": "<@{0}> {1}".format(user_name["user"]["name"], message),
                                                    "team": team_id})
 
-    async def joke(self, channel_id, user_name, team_id):
-        """Selects randomly a joke from the list"""
-        return await self.sendText(random.choice(self.jokes), channel_id, user_name, team_id)
+    def joke(self):
+        """Select randomly a joke from the list."""
+        return random.choice(self.jokes)
 
     async def picture(self, channel_id, user_name, team_id):
         """Sends a picture to the channel"""
@@ -132,7 +132,8 @@ class PictBot:
                 if len(message_split) > 0 and recipient == '<@{0}>'.format(bot_id):  # If message is adressed to our bot
                     core_text = message_split[1].strip()
                     action = self.api.get(core_text) or self.error
-                    print(await action(channel_id, user_name, team_id))
+                    response_text = action()
+                    print(await self.sendText(response_text, channel_id, user_name, team_id))
 
     async def connect(self):
         """Connects the bot to Slack"""
