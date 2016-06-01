@@ -14,6 +14,12 @@
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
 
+# venv
+bin
+lib
+include
+pyvenv.cfg
+
 #Secret
 config.py
 
@@ -51,3 +57,5 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+picbot.egg-info
+pip-selfcheck.json
