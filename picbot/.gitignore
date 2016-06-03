@@ -8,6 +8,8 @@
 
 #Python-related stuff
 *.pyc
+.DS_Store
+doc/_build/*
 
 # User-specific stuff:
 .idea/workspace.xml

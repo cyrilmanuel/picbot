@@ -7,6 +7,8 @@ async def api_call(method, data=None):
     """Slack API call."""
     with aiohttp.ClientSession() as session:
         token = os.environ.get('TOKEN')
+        if not token.startswith('xoxb-'):
+            return "token not defined."
         form = aiohttp.FormData(data or {})
         form.add_field('token', token)
         async with session.post('https://slack.com/api/{0}'.format(method),
