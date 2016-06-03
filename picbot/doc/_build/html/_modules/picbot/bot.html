@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -27,13 +27,11 @@
     <link rel="top" title="documentation picbot 1.0" href="../../index.html" />
     <link rel="up" title="Code du module" href="../index.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
@@ -41,7 +39,7 @@
           <div class="body" role="main">
             
   <h1>Code source de picbot.bot</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Sample Slack ping bot using asyncio and websockets.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Sample Slack ping bot using asyncio and websockets.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">aiohttp</span>
@@ -59,6 +57,7 @@
 
 
 <div class="viewcode-block" id="PictBot"><a class="viewcode-back" href="../../index.html#picbot.bot.PictBot">[docs]</a><span class="k">class</span> <span class="nc">PictBot</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;This object is able to connect to Slack and to send jokes and random images from XKCD.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">TOKEN</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rtm</span> <span class="o">=</span> <span class="bp">None</span>
@@ -78,23 +77,35 @@
         <span class="p">]</span>
 
 <div class="viewcode-block" id="PictBot.sendText"><a class="viewcode-back" href="../../index.html#picbot.bot.PictBot.sendText">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">sendText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">team_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sends a text message to the channel&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Sends a text message to the channel.</span>
+
+<span class="sd">        :param message: the text message to sens to the channel.</span>
+<span class="sd">        :param channel_id: id of the channel to send the message to.</span>
+<span class="sd">        :param user_name: name of the user you would like to adress.</span>
+<span class="sd">        :param team_id: id of the team your bot is in.</span>
+<span class="sd">        :returns: answer from the api_call.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">await</span> <span class="n">api_call</span><span class="p">(</span><span class="s1">&#39;chat.postMessage&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;message&quot;</span><span class="p">,</span>
                                                    <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="n">channel_id</span><span class="p">,</span>
                                                    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;@{0}&gt; {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user_name</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">message</span><span class="p">),</span>
-                                                   <span class="s2">&quot;team&quot;</span><span class="p">:</span> <span class="n">team_id</span><span class="p">})</span></div>
-
+                                                   <span class="s2">&quot;team&quot;</span><span class="p">:</span> <span class="n">team_id</span><span class="p">})</span>
+</div>
 <div class="viewcode-block" id="PictBot.joke"><a class="viewcode-back" href="../../index.html#picbot.bot.PictBot.joke">[docs]</a>    <span class="k">def</span> <span class="nf">joke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Select randomly a joke from the list.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jokes</span><span class="p">)</span></div>
+        <span class="sd">&quot;&quot;&quot;Select randomly a joke from the list.</span>
 
+<span class="sd">        :returns: text chosen by the method.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jokes</span><span class="p">)</span>
+</div>
 <div class="viewcode-block" id="PictBot.picture"><a class="viewcode-back" href="../../index.html#picbot.bot.PictBot.picture">[docs]</a>    <span class="k">def</span> <span class="nf">picture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sends a picture to the channel&quot;&quot;&quot;</span>
-        <span class="n">comic</span> <span class="o">=</span> <span class="n">xkcd</span><span class="o">.</span><span class="n">getRandomComic</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">comic</span><span class="o">.</span><span class="n">getImageLink</span><span class="p">()</span></div>
+        <span class="sd">&quot;&quot;&quot;Sends a picture to the channel</span>
 
+<span class="sd">        :returns: URL of the image chosen by the method.&quot;&quot;&quot;</span>
+        <span class="n">comic</span> <span class="o">=</span> <span class="n">xkcd</span><span class="o">.</span><span class="n">getRandomComic</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">comic</span><span class="o">.</span><span class="n">getImageLink</span><span class="p">()</span>
+</div>
 <div class="viewcode-block" id="PictBot.help"><a class="viewcode-back" href="../../index.html#picbot.bot.PictBot.help">[docs]</a>    <span class="k">def</span> <span class="nf">help</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Displays the help message to the channel&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Displays the help message to the channel</span>
+
+<span class="sd">        :returns: help text.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;Welcome to our Picture bot ! </span><span class="se">\n</span><span class="s2">&quot;</span> \
                       <span class="s2">&quot;This bot is here to send you some funny pictures from some funny websites. </span><span class="se">\n</span><span class="s2">&quot;</span> \
                       <span class="s2">&quot;Here are the commands : </span><span class="se">\n</span><span class="s2">&quot;</span> \
@@ -102,14 +113,18 @@
                       <span class="s2">&quot; - picture : one and the same. =P </span><span class="se">\n</span><span class="s2">&quot;</span> \
                       <span class="s2">&quot; - joke : gets you a random joke for you, programmer. </span><span class="se">\n</span><span class="s2">&quot;</span> \
                       <span class="s2">&quot; - help : You already know this one, don&#39;t you. </span><span class="se">\n</span><span class="s2">&quot;</span> \
-                      <span class="s2">&quot;Have fun !&quot;</span></div>
-
+                      <span class="s2">&quot;Have fun !&quot;</span>
+</div>
 <div class="viewcode-block" id="PictBot.error"><a class="viewcode-back" href="../../index.html#picbot.bot.PictBot.error">[docs]</a>    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;displays the error message to the channel, in case of bad input&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;Command not found. Type &#39;help&#39; for a list of valid commands.&quot;</span></div>
+        <span class="sd">&quot;&quot;&quot;displays the error message to the channel, in case of bad input.</span>
 
+<span class="sd">        :returns: error text.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;Command not found. Type &#39;help&#39; for a list of valid commands.&quot;</span>
+</div>
 <div class="viewcode-block" id="PictBot.process"><a class="viewcode-back" href="../../index.html#picbot.bot.PictBot.process">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Processes input messages.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Processes input messages.</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: brute message coming from Slack, waiting to be processed.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span>
             <span class="c1"># _____________________________________________</span>
@@ -150,8 +165,8 @@
                     <span class="n">core_text</span> <span class="o">=</span> <span class="n">message_split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                     <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">core_text</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span>
                     <span class="n">response_text</span> <span class="o">=</span> <span class="n">action</span><span class="p">()</span>
-                    <span class="k">print</span><span class="p">(</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">sendText</span><span class="p">(</span><span class="n">response_text</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">team_id</span><span class="p">))</span></div>
-
+                    <span class="k">print</span><span class="p">(</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">sendText</span><span class="p">(</span><span class="n">response_text</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">team_id</span><span class="p">))</span>
+</div>
 <div class="viewcode-block" id="PictBot.connect"><a class="viewcode-back" href="../../index.html#picbot.bot.PictBot.connect">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Connects the bot to Slack&quot;&quot;&quot;</span>
 
@@ -163,9 +178,9 @@
                 <span class="n">async</span> <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">ws</span><span class="p">:</span>
                     <span class="k">assert</span> <span class="n">msg</span><span class="o">.</span><span class="n">tp</span> <span class="o">==</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">MsgType</span><span class="o">.</span><span class="n">text</span>
                     <span class="n">message</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-                    <span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">message</span><span class="p">))</span></div></div>
+                    <span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
 
-
+</div></div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
     <span class="n">loop</span><span class="o">.</span><span class="n">set_debug</span><span class="p">(</span><span class="n">DEBUG</span><span class="p">)</span>
@@ -190,11 +205,14 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Recherche rapide</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Saisissez un mot clef ou un nom de module, classe ou fonction.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -205,8 +223,8 @@
       &copy;2016, Serex Alexandre et Jeanneret Cyril.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
     </div>
 

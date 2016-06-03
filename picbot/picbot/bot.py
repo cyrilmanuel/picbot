@@ -16,6 +16,7 @@ from config import DEBUG, TOKEN
 
 
 class PictBot:
+    """This object is able to connect to Slack and to send jokes and random images from XKCD."""
     def __init__(self, token=TOKEN):
         self.token = token
         self.rtm = None
@@ -35,23 +36,35 @@ class PictBot:
         ]
 
     async def sendText(self, message, channel_id, user_name, team_id):
-        """Sends a text message to the channel"""
+        """Sends a text message to the channel.
+
+        :param message: the text message to sens to the channel.
+        :param channel_id: id of the channel to send the message to.
+        :param user_name: name of the user you would like to adress.
+        :param team_id: id of the team your bot is in.
+        :returns: answer from the api_call."""
         return await api_call('chat.postMessage', {"type": "message",
                                                    "channel": channel_id,
                                                    "text": "<@{0}> {1}".format(user_name["user"]["name"], message),
                                                    "team": team_id})
 
     def joke(self):
-        """Select randomly a joke from the list."""
+        """Select randomly a joke from the list.
+
+        :returns: text chosen by the method."""
         return random.choice(self.jokes)
 
     def picture(self):
-        """Sends a picture to the channel"""
+        """Sends a picture to the channel
+
+        :returns: URL of the image chosen by the method."""
         comic = xkcd.getRandomComic()
         return comic.getImageLink()
 
     def help(self):
-        """Displays the help message to the channel"""
+        """Displays the help message to the channel
+
+        :returns: help text."""
         return "Welcome to our Picture bot ! \n" \
                       "This bot is here to send you some funny pictures from some funny websites. \n" \
                       "Here are the commands : \n" \
@@ -62,11 +75,15 @@ class PictBot:
                       "Have fun !"
 
     def error(self):
-        """displays the error message to the channel, in case of bad input"""
+        """displays the error message to the channel, in case of bad input.
+
+        :returns: error text."""
         return "Command not found. Type 'help' for a list of valid commands."
 
     async def process(self, message):
-        """Processes input messages."""
+        """Processes input messages.
+        
+        :param message: brute message coming from Slack, waiting to be processed."""
 
         if message.get('type') == 'message':
             # _____________________________________________

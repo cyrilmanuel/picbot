@@ -12,16 +12,21 @@ Contents:
    :maxdepth: 2
 
 
-albert
-------
+PictBot
+-------
 
 .. automodule:: picbot.bot
     :members:
     :undoc-members:
     :show-inheritance:
+	
+API
+---
 
-Explore API <api>
------------------
+.. automodule:: picbot.api
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Indices and tables
