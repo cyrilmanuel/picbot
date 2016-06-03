@@ -3,7 +3,7 @@ import pytest
 
 @pytest.fixture()
 def bot():
-    return picbot.PictBot()
+    return picbot.bot.PictBot()
 
 
 def test_picbot_joke(bot):
@@ -23,9 +23,9 @@ def test_picbot_help(bot):
 
 
 def test_picbot_error(bot):
-    assert "Command not found. Type 'help' for a list of valid commands." == bot.help()
+    assert "Command not found. Type 'help' for a list of valid commands." == bot.error()
 
 
 def test_picbot_pic(bot):
     list = bot.picture().rsplit('/', 1)
-    assert "http://imgs.xkcd.com/comics/" == list[0]
+    assert "http://imgs.xkcd.com/comics" == list[0]
