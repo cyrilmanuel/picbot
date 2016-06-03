@@ -2,10 +2,10 @@
 # PICBOT bot for slack 
 
 ## Introduction
-Ce bot permet de générer dans le chat de slack, des images aléatoires issue de xkcd.com
+Ce bot permet d'upload dans slack des images random du site xkcd.com.
 
-## Fonctionnalitées
-* il suffit d’inclure le bot à la conversation puis de l’appeler en tapant @picbot:
+## Fonctionnalités
+* il suffit d’inclure le bot à la conversation puis de l’appeler en tapant @pictbot:
 suivie d’une de ces 4 commande :
 
 "pic"
@@ -13,9 +13,9 @@ suivie d’une de ces 4 commande :
 "joke"
 "help"
 
-* picture ou pic (raccourci pour l’utilisateur), renvoie dans le chat une image issue de xkcd aléatoirement.
+* picture ou pic (raccourci pour l’utilisateur), renvoie dans le chat une image aléatoire issue de xkcd.com.
 * joke, renvoie dans le chat une petite blague de programmeur
-* help, renvoie dans le chat l’affichage d'un help
+* help, renvoie dans le chat un message d'aide contenant les différentes commandes.
 
 ## Installation
 
@@ -25,7 +25,7 @@ suivie d’une de ces 4 commande :
 * $ cd slack
 * $ git clone https://github.com/cyrilmanuel/picbot
 * $ . bin/activate
-* (slack)$ cd picbot
+* (slack)$ cd picbot //do this twice, because reasons
 * (slack)$ pip install -e .
 
 * (slack)$ export TOKEN=xoxb-123 //this token is given to you by slack.
@@ -37,7 +37,7 @@ suivie d’une de ces 4 commande :
 * > cd slack
 * $ git clone https://github.com/cyrilmanuel/picbot
 * > Scripts\activate.bat
-* (slack)> cd picbot
+* (slack)> cd picbot  //do this twice, because reasons
 * (slack)> pip install -e .
 
 * (slack)> set TOKEN=xoxb-123 //this token is given to you by slack.
