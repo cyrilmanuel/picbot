@@ -21,7 +21,7 @@ suivie d’une de ces 4 commande :
 
 ### LINUX based
 
-* $ git clone <URL>
+* $ git clone URL
 * $ python3 -m venv slack
 * $ cd slack
 * $ . bin/activate
@@ -33,13 +33,13 @@ suivie d’une de ces 4 commande :
 
 ### WINDOWS based
 
-* $ git clone <URL>
-* $ python -m venv slack
-* $ cd slack
-* $ Scripts\activate.bat
-* (slack)$ cd picbot
-* (slack)$ pip install -e .
+* > python -m venv slack
+* $ git clone URL
+* > cd slack
+* > Scripts\activate.bat
+* (slack)> cd picbot
+* (slack)> pip install -e .
 
-* (slack)$ set TOKEN=xoxb-123
-* (slack)$ python -m picbot
+* (slack)> set TOKEN=xoxb-123 this token is given to you by slack.
+* (slack)> python -m picbot
 
