@@ -1,12 +1,12 @@
 """Testing the authentication on Slack API."""
 import aiohttp
+import os
 
-from config import DEBUG, TOKEN
 
-
-async def api_call(method, data=None, token=TOKEN):
+async def api_call(method, data=None):
     """Slack API call."""
     with aiohttp.ClientSession() as session:
+        token = os.environ.get('TOKEN')
         form = aiohttp.FormData(data or {})
         form.add_field('token', token)
         async with session.post('https://slack.com/api/{0}'.format(method),
