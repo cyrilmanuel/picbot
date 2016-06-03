@@ -7,7 +7,6 @@ import xkcd
 # import antigravity # CAREFUL : Dangerous ! Velociraptors might appear.
 
 from .api import api_call
-from config import DEBUG, TOKEN
 
 # Le bot :
 #   -Ne répond que lorsqu'on s'addresse à lui, sous forme de texte.
@@ -17,7 +16,7 @@ from config import DEBUG, TOKEN
 
 class PictBot:
     """This object is able to connect to Slack and to send jokes and random images from XKCD."""
-    def __init__(self, token=TOKEN):
+    def __init__(self, token):
         self.token = token
         self.rtm = None
         self.api = {
