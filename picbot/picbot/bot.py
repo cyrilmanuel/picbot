@@ -67,7 +67,7 @@ class PictBot:
 
         :returns: help text."""
         return "Welcome to our Picture bot ! \n" \
-                      "This bot is here to send you some funny pictures from some funny websites. \n" \
+                      "This bot is here to send you some funny pictures from the xkcd.com website. \n" \
                       "Here are the commands : \n" \
                       " - pic : uploads a picture. \n" \
                       " - picture : one and the same. =P \n" \
