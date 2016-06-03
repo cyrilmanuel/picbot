@@ -21,25 +21,25 @@ suivie d’une de ces 4 commande :
 
 ### LINUX based
 
-$ git clone <URL>
-$ python3 -m venv slack
-$ cd slack
-$ . bin/activate
-(slack)$ cd picbot
-(slack)$ pip install -e .
+* $ git clone <URL>
+* $ python3 -m venv slack
+* $ cd slack
+* $ . bin/activate
+* (slack)$ cd picbot
+* (slack)$ pip install -e .
 
-(slack)$ export TOKEN=xoxb-123
-(slack)$ python -m picbot
+* (slack)$ export TOKEN=xoxb-123
+* (slack)$ python -m picbot
 
 ### WINDOWS based
 
-$ git clone <URL>
-$ python -m venv slack
-$ cd slack
-$ Scripts\activate.bat
-(slack)$ cd picbot
-(slack)$ pip install -e .
+* $ git clone <URL>
+* $ python -m venv slack
+* $ cd slack
+* $ Scripts\activate.bat
+* (slack)$ cd picbot
+* (slack)$ pip install -e .
 
-(slack)$ set TOKEN=xoxb-123
-(slack)$ python -m picbot
+* (slack)$ set TOKEN=xoxb-123
+* (slack)$ python -m picbot
 
