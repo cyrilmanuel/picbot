@@ -82,7 +82,7 @@ class PictBot:
 
     async def process(self, message):
         """Processes input messages.
-        
+
         :param message: brute message coming from Slack, waiting to be processed."""
 
         if message.get('type') == 'message':
@@ -140,9 +140,3 @@ class PictBot:
                     asyncio.ensure_future(self.process(message))
 
 
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.set_debug(DEBUG)
-    bot = PictBot(TOKEN)
-    loop.run_until_complete(bot.connect())
-    loop.close()

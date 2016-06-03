@@ -27,5 +27,4 @@ def test_picbot_error(bot):
 
 
 def test_picbot_pic(bot):
-    list = bot.picture().rsplit('/', 1)
-    assert "http://imgs.xkcd.com/comics" == list[0]
+    assert bot.picture().startswith("http://imgs.xkcd.com/comics/")
