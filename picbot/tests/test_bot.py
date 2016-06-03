@@ -1,10 +1,14 @@
 import picbot
 import pytest
+import os
 
 
 @pytest.fixture()
 def bot():
-    return picbot.bot.PictBot()
+    token = os.environ.get('TOKEN')
+    if not token.startswith('xoxb-'):
+        return "token not defined."
+    return picbot.bot.PictBot(token)
 
 
 @pytest.mark.asyncio
