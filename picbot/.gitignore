@@ -8,7 +8,7 @@
 
 #Python-related stuff
 *.pyc
-.DS_Store
+doc/.DS_Store
 doc/_build/*
 
 # User-specific stuff:
