@@ -15,7 +15,7 @@ setup(
         'cchardet'
     ),
     extras_requires={
-        'test': ('pytest', 'pytest-flake8', 'pytest-coverage'),
+        'test': ('pytest', 'pytest-flake8', 'pytest-coverage', 'pytest-asyncio'),
         'doc': ('Sphinx', 'sphinx_rtd_theme'),
     }
 )

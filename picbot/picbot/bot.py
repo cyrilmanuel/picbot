@@ -48,20 +48,22 @@ class PictBot:
                                                    "text": "<@{0}> {1}".format(user_name["user"]["name"], message),
                                                    "team": team_id})
 
-    def joke(self):
+    async def joke(self):
         """Select randomly a joke from the list.
 
         :returns: text chosen by the method."""
         return random.choice(self.jokes)
 
-    def picture(self):
+    async def picture(self):
         """Sends a picture to the channel
 
         :returns: URL of the image chosen by the method."""
-        comic = xkcd.getRandomComic()
+        loop = asyncio.get_event_loop()
+        future = loop.run_in_executor(None, xkcd.getRandomComic)  # Permet une réelle parallelisation
+        comic = await future
         return comic.getImageLink()
 
-    def help(self):
+    async def help(self):
         """Displays the help message to the channel
 
         :returns: help text."""
@@ -74,7 +76,7 @@ class PictBot:
                       " - help : You already know this one, don't you. \n" \
                       "Have fun !"
 
-    def error(self):
+    async def error(self):
         """displays the error message to the channel, in case of bad input.
 
         :returns: error text."""
@@ -123,7 +125,7 @@ class PictBot:
                 if len(message_split) > 0 and recipient == '<@{0}>'.format(bot_id):  # If message is adressed to our bot
                     core_text = message_split[1].strip()
                     action = self.api.get(core_text) or self.error
-                    response_text = action()
+                    response_text = await action()
                     print(await self.sendText(response_text, channel_id, user_name, team_id))
 
     async def connect(self):
