@@ -23,7 +23,7 @@ suivie d’une de ces 4 commande :
 
 * $ python3 -m venv slack
 * $ cd slack
-* $ git clone github.com/cyrilmanuel/picbot
+* $ git clone https://github.com/cyrilmanuel/picbot
 * $ . bin/activate
 * (slack)$ cd picbot
 * (slack)$ pip install -e .
@@ -35,7 +35,7 @@ suivie d’une de ces 4 commande :
 
 * > python -m venv slack
 * > cd slack
-* $ git clone github.com/cyrilmanuel/picbot
+* $ git clone https://github.com/cyrilmanuel/picbot
 * > Scripts\activate.bat
 * (slack)> cd picbot
 * (slack)> pip install -e .
