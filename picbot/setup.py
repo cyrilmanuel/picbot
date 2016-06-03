@@ -8,8 +8,14 @@ setup(
     description=__doc__,
     packages=find_packages(),
     install_requires=(
+        'pypandoc',
         'xkcd',
         'aiohttp',
-        'pypandoc'
-    )
+        'asyncio',
+        'cchardet'
+    ),
+    extras_requires={
+        'test': ('pytest', 'pytest-flake8', 'pytest-coverage'),
+        'doc': ('Sphinx', 'sphinx_rtd_theme'),
+    }
 )

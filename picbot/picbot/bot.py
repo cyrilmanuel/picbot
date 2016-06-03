@@ -6,25 +6,14 @@ import random
 import xkcd
 # import antigravity # CAREFUL : Dangerous ! Velociraptors might appear.
 
-from .api import api_call
+from api import api_call
 from config import DEBUG, TOKEN
-
 
 # Le bot :
 #   -Ne répond que lorsqu'on s'addresse à lui, sous forme de texte.
 #   -Répond aux commandes pic, picture, joke et help.
 #   -Dirige les utilisateurs vers la commande help si aucune bonne commande entrée.
 
-# Liens utiles :
-#   -Méthodes disponibles pour api_call : https://api.slack.com/methods
-#   -Guide du prof : https://medium.com/@greut/a-slack-bot-with-pythons-3-5-asyncio-ad766d8b5d8f#.7okn8gngi
-#   -rtm documentation : https://api.slack.com/rtm
-#   -rtm.start documentation : https://api.slack.com/methods/rtm.start
-
-# Notes :
-#   -Le bot n'uplload pas d'images, il va les chercher déjà existantes sur Internet.
-#    La méthode file.upload permet de mettre une image en ligne sur les serveurs Slack.
-#    Pour l'afficher, il faut ensuite aller chercher son URL, présent dans le texte retourné par la méthode file.upload.
 
 class PictBot:
     def __init__(self, token=TOKEN):
@@ -56,17 +45,14 @@ class PictBot:
         """Select randomly a joke from the list."""
         return random.choice(self.jokes)
 
-    async def picture(self, channel_id, user_name, team_id):
+    def picture(self):
         """Sends a picture to the channel"""
-        loop = asyncio.get_event_loop()
-        future = loop.run_in_executor(None, xkcd.getRandomComic)  # Permet une réelle parallelisation
-        comic = await future
-        link = comic.getImageLink()
-        return await self.sendText(link, channel_id, user_name, team_id)
+        comic = xkcd.getRandomComic()
+        return comic.getImageLink()
 
-    async def help(self, channel_id, user_name, team_id):
+    def help(self):
         """Displays the help message to the channel"""
-        helpMessage = "Welcome to our Picture bot ! \n" \
+        return "Welcome to our Picture bot ! \n" \
                       "This bot is here to send you some funny pictures from some funny websites. \n" \
                       "Here are the commands : \n" \
                       " - pic : uploads a picture. \n" \
@@ -74,20 +60,15 @@ class PictBot:
                       " - joke : gets you a random joke for you, programmer. \n" \
                       " - help : You already know this one, don't you. \n" \
                       "Have fun !"
-        return await self.sendText(helpMessage, channel_id, user_name, team_id)
 
-    async def error(self, channel_id, user_name, team_id):
+    def error(self):
         """displays the error message to the channel, in case of bad input"""
-        error = "Command not found. Type 'help' for a list of valid commands."
-        return await self.sendText(error, channel_id, user_name, team_id)
+        return "Command not found. Type 'help' for a list of valid commands."
 
     async def process(self, message):
         """Processes input messages."""
-        # Comment the line below if you want your bot to be active on all channels
-        # and don't forget to modify the if statement below too
-        # channel_id = 'G1AN77A0L'  # name of the channel you want the bot active in.
 
-        if message.get('type') == 'message':  # and message.get('channel') == channel_id:
+        if message.get('type') == 'message':
             # _____________________________________________
             # _____________________________________________
             # ///////////INFORMATION FORMATTING\\\\\\\\\\\\
@@ -97,12 +78,9 @@ class PictBot:
             # Channel-related entries
             # Un-comment this next line if your bot should be active in all channels he's invited in
             channel_id = message.get('channel')
-            channel_name = await api_call('channels.info',  # gets the name of the channel for given id
-                                          {'channel': channel_id})  # doesn't work all the time
 
             # Team-related entries
             team_id = self.rtm['team']['id']  # gets id of the active team
-            team_name = self.rtm['team']['name']  # gets name of the active team
 
             # User-related entries
             user_id = message.get('user')
@@ -111,12 +89,8 @@ class PictBot:
 
             # Self-related entries
             bot_id = self.rtm['self']['id']  # gets id of self, meaning the bot.
-            bot_name = self.rtm['self']['name'] # gets its name
-
             # message related entries
             message_text = message.get('text')
-            # Prints input message. May contain useful information for coding, debugging, etc.
-            # print("message : {0}".format(message))
 
             # _____________________________________________
             # _____________________________________________

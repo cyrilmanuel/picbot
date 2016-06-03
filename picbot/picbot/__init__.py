@@ -1,1 +1,1 @@
-from .bot import PictBot
+from . import bot
